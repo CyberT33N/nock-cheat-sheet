@@ -3,7 +3,7 @@ Cheat Sheet for nock with the most needed stuff..
 
 
 
-<br><br
+<br><br>
 
 # Simulate Error
 ```javascript
@@ -33,7 +33,16 @@ test()
 
 
 
-<br><br
+<br><br>
 _______________________________________________________
 
-<br><br
+<br><br>
+        
+
+
+# Common Problems
+
+## Nock not working but url seems correct.
+- Make sure that your url does not end with /
+  - Correct: https://api.web.de/test
+  - Not Correct: https://api.web.de/test/
