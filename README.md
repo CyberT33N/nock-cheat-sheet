@@ -38,7 +38,6 @@ test()
 
 <br><br>
 _______________________________________________________
-
 <br><br>
         
 Clear
@@ -56,6 +55,23 @@ after(() => nock.cleanAll())
         
         
         
+        
+        
+        
+
+
+<br><br>
+_______________________________________________________
+<br><br>
+        
+Incepter Count
+- Check how often your nock instance was called
+```javascript
+nockInstance = nock('https://google.com')
+  .get('/')
+                
+const interceptorCount = nockInstance.keyedInterceptors[Object.keys(nockInstance.keyedInterceptors)[0]][0].interceptionCounter
+```
         
         
         
