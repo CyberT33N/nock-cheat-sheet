@@ -70,7 +70,7 @@ Incepter Count
 nockInstance = nock('https://google.com')
   .get('/')
                 
-const interceptorCount = nockInstance.keyedInterceptors[Object.keys(nockInstance.keyedInterceptors)[0]][0].interceptionCounter
+const interceptorCount = nockInstance.interceptors[0].interceptionCounter
 ```
         
         
