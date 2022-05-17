@@ -46,6 +46,101 @@ after(() => nock.cleanAll())
 ```
         
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br><br>
+_______________________________________________________
+<br><br>
+        
+## Interceptor
+
+
+## Remove Interceptors from instance
+```javascript
+nockInstance = nock('https://google.com')
+  .get('/')
+  
+nockInstance.on('request', (req, interceptor) => {
+    nock.removeInterceptor()
+})          
+```
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+       
+<br><br>
+_______________________________________________________
+<br><br>
+        
+## Events
+
+
+## request
+```javascript
+nockInstance = nock('https://google.com')
+  .get('/')
+  
+nockInstance.on('request', (req, interceptor) => {
+    // ...
+})          
+```
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         
