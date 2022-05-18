@@ -78,6 +78,7 @@ _______________________________________________________
         
 ## Interceptor
 
+<br><br>
 
 ## Remove Interceptors from instance
 ```javascript
@@ -92,8 +93,25 @@ nock.removeInterceptor(interceptor)
 ```
             
         
-        
-        
+    <br><br>    
+      
+
+## Overwrite response body
+```javascript
+beforeEach(() => {
+    if (nockInstanceSettings) {
+        nockInstanceSettings.body = docs_SettingsAll
+    } else {
+        nockInstanceSettings = nock('http://example.org').get('somePath')
+    }
+})
+
+it('should return something', async () => {
+    nockInstanceSettings.body = [{test:true}]
+})
+```
+            
+          
         
         
         
