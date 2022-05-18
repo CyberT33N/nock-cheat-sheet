@@ -36,16 +36,28 @@ test()
 
 
 
+
+
+
+
 <br><br>
 _______________________________________________________
 <br><br>
         
-Clear
+# Clear
+
+
+## cleanAll
+- Will clean all interceptors
 ```javascript
 after(() => nock.cleanAll())
 ```
         
         
+
+
+
+
 
 
 
@@ -69,12 +81,14 @@ _______________________________________________________
 
 ## Remove Interceptors from instance
 ```javascript
-nockInstance = nock('https://google.com')
-  .get('/')
-  
-nockInstance.on('request', (req, interceptor) => {
-    nock.removeInterceptor()
-})          
+// this will NOT work
+const interceptor = nock('http://example.org').get('somePath').reply(200, 'OK')
+nock.removeInterceptor(interceptor)
+
+// this is how it should be
+const interceptor = nock('http://example.org').get('somePath')
+interceptor.reply(200, 'OK')
+nock.removeInterceptor(interceptor)  
 ```
             
         
