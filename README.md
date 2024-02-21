@@ -168,6 +168,124 @@ nockInstance.on('request', (req, interceptor) => {
         
         
         
+<br><br>
+_______________________________________________________
+
+<br><br>
+
+# Proxy
+
+## axios proxy
+- If you use e.g. axios proxy then nock will not work correctly. In order to fix this we create an express server to simulate the proxy
+```javascript
+before(() => {
+    const app = express()
+    
+    // Middleware zum Parsen von URL-encodierten Daten
+    app.use(bodyParser.json({ limit: '50mb' }))
+    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+    
+    const storage = multer.memoryStorage()
+    const uploadMiddleware = multer({
+        storage: storage,
+        limits: { fileSize:16*1024*1024 } // accepted limit of file size
+    })
+    
+    // Middleware zum Hochladen des Bildes
+    app.use(uploadMiddleware.single('file'))
+    
+    // Fake proxy server
+    app.use(async (req, res) => {
+        const { method, url, headers, body, file } = req
+        proxyCalledHeaders = headers
+        proxyCalled = true
+        proxyCalledFile = file
+        proxyCalledBody = body
+    
+        try {
+            const response = await axios({
+                method,
+                url,
+                headers,
+                data: body
+            })
+    
+            res.status(response.status).send(response.data)
+        } catch (e) {
+            if (e.response) {
+                res.status(e.response.status).send(e.response.data)
+            } else {
+                res.status(500).send('Internal Server Error')
+            }
+        }
+    })
+})
+
+
+describe('[FormData() - "multipart/form-data"]', () => {
+    let form 
+    const imageName = "file"
+    const path = `${__dirname}/img.png`
+    const fileName = `${imageName}.png`
+
+    const pathAfter = `${__dirname}/${imageName}_after.png`
+
+    const nockResponseBody = 'test'
+
+    before(async () => {
+        const imageBuffer = await fs.readFile(path)
+        
+        form = new FormData()
+        form.append(imageName, imageBuffer, fileName)
+        form.append('name', imageName)
+    })
+
+    after(async () => {
+        await fs.unlink(pathAfter)
+    })
+
+    beforeEach(async () => {
+        nock.cleanAll()
+        await tdm.insert([datasourceIdWithoutHandlebarsFormData])
+
+        nockInstanceExecuteDatasourceByIdFormData = nockWrapper({
+            method: doc_DatasourceIdWithoutHandlebarsFormData.method,
+            url: doc_DatasourceIdWithoutHandlebarsFormData.url,
+            response: {
+                statusCode: 201,
+                body: nockResponseBody
+            }
+        })
+    })
+
+    afterEach(async () => {
+        await tdm.cleanupAll()
+        nock.cleanAll()
+    })
+
+    it('should execute datasource by id without variables object and form data', async () => {
+        expect(proxyCalled).to.be.equal(false)
+        expect(nockInstanceExecuteDatasourceByIdFormData.interceptionCounter).to.be.equal(0)
+        expect(doc_DatasourceIdWithoutHandlebarsFormData.headers["Content-Type"]).to.be.equal("multipart/form-data")
+
+        const res = await executeDatasourceById(datasourceIdWithoutHandlebarsFormData, form)
+        expect(res.status).to.equal(200)
+        expect(res.data).to.equal(nockResponseBody)
+
+        // Save file and compare hash
+        fs.writeFileSync(pathAfter, proxyCalledFile.buffer)
+
+        const hash1 = calculateHash(path)
+        const hash2 = calculateHash(pathAfter)
+
+        expect(hash1).to.equal(hash2)
+
+        expect(proxyCalled).to.be.equal(true)
+        expect(proxyCalledHeaders['content-type']).to.includes('multipart/form-data')
+        expect(nockInstanceExecuteDatasourceByIdFormData.interceptionCounter).to.be.equal(1)
+    })
+})
+```
         
         
         
