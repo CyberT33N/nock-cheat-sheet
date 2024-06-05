@@ -3,9 +3,63 @@ Cheat Sheet for nock with the most needed stuff..
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br><br>
+<br><br>
+________________________________
+________________________________
+<br><br>
 <br><br>
 
-# Simulate Error
+# Query Paramater
+```
+nock(ETHERSCAN_API_BASE_URL)
+.get('/api')
+.query({
+    module: 'account',
+    action: 'txlist',
+    address: WALLET_ETH_ADDRESS,
+    startblock: startBlock,
+    endblock: endBlock,
+    sort: sort,
+    page: page,
+    offset: offset,
+    apikey: API_KEY_ETHERSCAN
+})
+.reply(200, expectedTransactions)
+```
+
+
+
+
+
+
+
+
+
+
+<br><br>
+<br><br>
+________________________________
+________________________________
+<br><br>
+<br><br>
+
+# Error
 ```javascript
 const nock = require('nock')
 const axios = require('axios')
